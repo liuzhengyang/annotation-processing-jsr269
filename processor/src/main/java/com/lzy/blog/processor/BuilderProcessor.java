@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -19,7 +18,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
-import com.google.auto.service.AutoService;
 import com.lzy.blog.Builder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -35,7 +33,6 @@ import com.squareup.javapoet.TypeSpec;
         "com.lzy.blog.Builder"
 })
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@AutoService(Processor.class)
 public class BuilderProcessor extends AbstractProcessor {
 
     private Filer filer;
@@ -62,13 +59,13 @@ public class BuilderProcessor extends AbstractProcessor {
             MethodSpec.Builder builderMethod = MethodSpec.methodBuilder("build")
                     .returns(TypeName.get(element.asType()))
                     .addModifiers(Modifier.PUBLIC)
-                    .addStatement("$T instance = new $T()", ClassName.get(elementTypeMirror), ClassName.get(elementTypeMirror));
+                    .addStatement("$T instance = new $T()", TypeName.get(elementTypeMirror), TypeName.get(elementTypeMirror));
 
             element.getEnclosedElements().forEach(field -> {
                 if (field.getKind() == ElementKind.FIELD) {
                     boolean isStatic = field.getModifiers().contains(STATIC);
                     if (isStatic) {
-                        System.out.println(field.getSimpleName() + "is static");
+                        System.out.println(field.getSimpleName() + " is static");
                         return;
                     }
                     String fieldName = field.getSimpleName().toString();
